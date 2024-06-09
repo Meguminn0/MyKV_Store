@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+mykv_store
+
+# build file
+build/*
