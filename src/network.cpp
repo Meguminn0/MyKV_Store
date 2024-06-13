@@ -5,58 +5,57 @@
 
 #include "network.h"
 
-int reactor::epoll_fd;
-std::map<int, reactor::connector*> reactor::fd_map;
+int Reactor::epoll_fd_;
+std::map<int, Reactor::Connector*> Reactor::fd_map_;
 
-reactor& reactor::getInstance()
+Reactor& Reactor::getInstance()
 {
-    static reactor instance;
+    static Reactor instance;
     instance.init();
     return instance;
 }
 
-reactor::connector* reactor::getConnector(int fd)
+Reactor::Connector* Reactor::getConnector(int fd)
 {
-    
-    return fd_map.find(fd)->second;
+    return fd_map_.find(fd)->second;
 }
 
-int reactor::epoll_add(int fd, epoll_event* event, CALLBACK_CON func_cb)
+int Reactor::epoll_add(int fd, epoll_event* event, CALLBACK_FUNCTION function)
 {
-    if(fd_map.find(fd) == fd_map.end())
+    if(fd_map_.find(fd) == fd_map_.end())
     {
-        connector *newConnctor = new connector();
-        newConnctor->fd = fd;
-        newConnctor->func_cb = func_cb;
-        fd_map.insert(std::make_pair(fd, newConnctor));
+        Connector *new_connctor = new Connector();
+        new_connctor->fd = fd;
+        new_connctor->call_back_function = function;
+        fd_map_.insert(std::make_pair(fd, new_connctor));
     }
-    return epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, event);
+    return epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, fd, event);
 }
 
-int reactor::epoll_mod(int fd, epoll_event* event, CALLBACK_CON func_cb)
+int Reactor::epoll_mod(int fd, epoll_event* event, CALLBACK_FUNCTION function)
 {
-    fd_map[fd]->func_cb = func_cb;
-    return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, event);
+    fd_map_[fd]->call_back_function = function;
+    return epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, fd, event);
 }
 
-int reactor::epoll_del(int fd)
+int Reactor::epoll_del(int fd)
 {
-    if(fd_map.find(fd) != fd_map.end())
+    if(fd_map_.find(fd) != fd_map_.end())
     {
-        delete fd_map[fd];
-        fd_map[fd] = nullptr;
-        fd_map.erase(fd);
+        delete fd_map_[fd];
+        fd_map_[fd] = nullptr;
+        fd_map_.erase(fd);
     }
-    return epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
+    return epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, fd, nullptr);
 }
 
-int reactor::epoll_waiting(epoll_event* events, int maxEvents, int timeout)
+int Reactor::epoll_waiting(epoll_event* events, int max_events, int timeout)
 {
-    return epoll_wait(epoll_fd, events, maxEvents, timeout);
+    return epoll_wait(epoll_fd_, events, max_events, timeout);
 }
 
-void reactor::init()
+void Reactor::init()
 {
-    epoll_fd = epoll_create(1);
-    assert(epoll_fd != -1);
+    epoll_fd_ = epoll_create(1);
+    assert(epoll_fd_ != -1);
 }
