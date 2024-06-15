@@ -6,9 +6,9 @@
 int main(int argc, char* argv[])
 {
     KvStore kv_store;
-    kv_store.netStart();
+    kv_store.NetStart();
     
-    kv_store.eventLoop();
+    kv_store.EventLoop();
 
     return 0;
 }

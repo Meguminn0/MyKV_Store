@@ -6,13 +6,13 @@ class KvStore
 {
 public:
     KvStore();
-    void netStart();
-    void eventLoop();
+    void NetStart();
+    void EventLoop();
 
 protected:
-    static void accept_callBack(int listenfd);
-    static void recv_callBack(int clientfd);
-    static void send_callBack(int clientfd);
+    static void Accept_callBack(int listenfd);
+    static void Recv_callBack(int clientfd);
+    static void Send_callBack(int clientfd);
 
 private:
     int listen_socketfd_;

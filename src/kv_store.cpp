@@ -14,7 +14,7 @@ KvStore::KvStore() : listen_socketfd_(-1)
 
 }
 
-void KvStore::netStart()
+void KvStore::NetStart()
 {
     listen_socketfd_ = socket(AF_INET, SOCK_STREAM, 0);
     assert(listen_socketfd_ != -1);
@@ -35,12 +35,12 @@ void KvStore::netStart()
     std::cout << "listen port: " << 2024 << " sockfd: " << listen_socketfd_ << std::endl;
 }
 
-void KvStore::eventLoop()
+void KvStore::EventLoop()
 {
     struct epoll_event ev;
     ev.data.fd = listen_socketfd_;
     ev.events = EPOLLIN;
-    reactor_.epoll_add(listen_socketfd_, &ev, accept_callBack);
+    reactor_.epoll_add(listen_socketfd_, &ev, Accept_callBack);
 
     struct epoll_event events[1024] = { 0 };
     while(1)
@@ -70,7 +70,7 @@ void KvStore::eventLoop()
     }
 }
 
-void KvStore::accept_callBack(int listenfd)
+void KvStore::Accept_callBack(int listenfd)
 {
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
@@ -85,10 +85,10 @@ void KvStore::accept_callBack(int listenfd)
     struct epoll_event ev;
     ev.data.fd = clientfd;
     ev.events = EPOLLIN;
-    reactor_.epoll_add(clientfd, &ev, recv_callBack);
+    reactor_.epoll_add(clientfd, &ev, Recv_callBack);
 }
 
-void KvStore::recv_callBack(int clientfd)
+void KvStore::Recv_callBack(int clientfd)
 {
     Reactor::Connector* clinet_connector = reactor_.getConnector(clientfd);
     int new_recv_len = recv(clientfd, clinet_connector->recv_buffer + clinet_connector->recv_len, RECV_BUFFER_SIZE, 0);
@@ -125,11 +125,11 @@ void KvStore::recv_callBack(int clientfd)
         struct epoll_event ev;
         ev.data.fd = clientfd;
         ev.events = EPOLLOUT;
-        reactor_.epoll_mod(clientfd, &ev, send_callBack);
+        reactor_.epoll_mod(clientfd, &ev, Send_callBack);
     }
 }
 
-void KvStore::send_callBack(int clientfd)
+void KvStore::Send_callBack(int clientfd)
 {
     Reactor::Connector* clinet_connector = reactor_.getConnector(clientfd);
     int new_send_len = send(clientfd, clinet_connector->send_buffer, clinet_connector->send_len, 0);
@@ -148,5 +148,5 @@ void KvStore::send_callBack(int clientfd)
     struct epoll_event ev;
     ev.data.fd = clientfd;
     ev.events = EPOLLIN;
-    reactor_.epoll_mod(clientfd, &ev, recv_callBack);
+    reactor_.epoll_mod(clientfd, &ev, Recv_callBack);
 }
