@@ -1,5 +1,12 @@
 #ifndef RBTREE_H_
 #define RBTREE_H_
+#include <cassert>
+#include <cstring>
+// #define DEBUG
+
+#ifdef DEBUG
+#include <iostream>
+#endif
 
 typedef bool rbtree_node_color_type;        // 节点颜色
 static constexpr rbtree_node_color_type rbtree_node_red = true;      // 红色节点 
@@ -24,137 +31,13 @@ struct RBTreeNode
 };
 
 // tree algorithm
-RBTreeNode* CreateNode(RBTreeNode::key_type key, RBTreeNode::value_type value)
-{
-    std::allocator<RBTreeNode> alltor;
-    RBTreeNode* node = new RBTreeNode();
-    node->key = key
-    node->value = value;
-    node->parent = nullptr;
-    node->left = nullptr;
-    node->right = nullptr;
-    node->color = rbtree_node_red:
-    
-    return node;
-}
+RBTreeNode* CreateNode(RBTreeNode::key_type key, RBTreeNode::value_type value);
+void InvertColor(RBTreeNode* node);
 
-void InvertColor(RBTreeNode* node)
-{
-    node->color = !node->color;
-}
-
-RBTreeNode* GetBrother(RBTreeNode* node)
-{
-    bool is_left_node = ((node == node->parent->left) ? true : false);
-    if(is_left_node)
-    {
-        return node->parent->right;
-    }
-    else
-    {
-        return node->parent->left;
-    }
-}
-
-RBTreeNode* GetLeftMostNode(RBTreeNode* node)
-{
-    while(node->left != nullptr)
-    {
-        node = node->left;
-    }
-
-    return node;
-}
-
-RBTreeNode* GetRightMostNode(RBTreeNode* node)
-{
-    while(node->right != nullptr)
-    {
-        node = node->right;
-    }
-
-    return node;
-}
-
-LL_InsertRotate(RBTreeNode* node)
-{
-
-}
-
-RR_InsertRotate(RBTreeNode* node)
-{
-    
-}
-
-LR_InsertRotate(RBTreeNode* node)
-{
-    
-}
-
-RL_InsertRotate(RBTreeNode* node)
-{
-    
-}
-
-void MaintainAfterInsert(RBTreeNode* node)
-{
-    if(node->parent == nullptr && node->color == rbtree_node_red)
-    {
-        InvertColor(node);
-        return;
-    }
-
-    RBTreeNode* parent = node->parent;
-    assert(parent != nullptr);
-
-    if(parent->color == rbtree_node_red)
-    {
-        RBTreeNode* grandparent = parent->parent;
-        assert(grandparent != nullptr);
-        RBTreeNode* uncle = GetBrother(parent);
-
-        if(uncle != nullptr && uncle->color == rbtree_node_red)
-        {
-            InvertColor(uncle);
-            InvertColor(parent);
-            InvertColor(grandparent);
-
-            MaintainAfterInsert(grandparent);
-        }
-        else
-        {
-            bool parent_is_left = ((parent == grandparent->left) ? true : false);
-            bool node_is_left = ((node == parent->left) ? true : false);
-            if(parent_is_left)
-            {
-                if(node_is_left)
-                {
-                    LL_InsertRotate(node);
-                }
-                else
-                {
-                    LR_InsertRotate(node);
-                }
-            }
-            else
-            {
-                if(node_is_left)
-                {
-                    RL_InsertRotate(node);
-                }
-                else
-                {
-                    RR_InsertRotate(node);
-                }
-            }
-        }
-    }
-}
-
-void MaintainAfterRemove(RBTreeNode* node)
-{
-
-}
+#ifdef DEBUG
+class RBTree;
+void show(RBTree* tree);
+#endif
 
 class RBTree
 {
@@ -165,9 +48,31 @@ public:
     RBTree() : root_(nullptr), count_(0) { }
     ~RBTree();
 
+	void intrav(std::vector<char*>& v);
     int Insert(key_type key, value_type value);
-    int remove(key_type key);
-    RBTreeNode* search(key_type key);
+    int Remove(key_type key);
+    RBTreeNode* Search(key_type key);
+
+protected:
+    RBTreeNode* GetBrother(RBTreeNode* node);
+    RBTreeNode* GetLeftMostNode(RBTreeNode* node);
+    RBTreeNode* GetRightMostNode(RBTreeNode* node);
+
+    void RightRotate(RBTreeNode* node);
+    void LeftRotate(RBTreeNode* node);
+
+    void LL_InsertRotate(RBTreeNode* node);
+    void RR_InsertRotate(RBTreeNode* node);
+    void LR_InsertRotate(RBTreeNode* node);
+    void RL_InsertRotate(RBTreeNode* node);
+    
+    void LL_RemoveRotate(RBTreeNode* node);
+    void RR_RemoveRotate(RBTreeNode* node);
+    void LR_RemoveRotate(RBTreeNode* node);
+    void RL_RemoveRotate(RBTreeNode* node);
+
+    void MaintainAfterInsert(RBTreeNode* node);
+    void MaintainAfterRemove(RBTreeNode* node);
 
 private:
     RBTreeNode* root_;  // 根节点
