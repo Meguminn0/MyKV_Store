@@ -1,4 +1,6 @@
 #include "kv_store.h"
+#include <vector>
+#include <string>
 #include <sys/types.h>          /* See NOTES */
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -113,7 +115,7 @@ void KvStore::Recv_callBack(int clientfd)
         std::cout << "fd: " << clientfd << " recv data: " << clinet_connector->recv_buffer << std::endl;
 
         // 处理客户端发送的数据
-        // ...
+        ProcessCmd(clinet_connector->recv_buffer, clinet_connector->recv_len);
         
         memset(clinet_connector->send_buffer, '\0', SEND_BUFFER_SIZE);
         memcpy(clinet_connector->send_buffer, clinet_connector->recv_buffer, clinet_connector->recv_len);
@@ -149,4 +151,30 @@ void KvStore::Send_callBack(int clientfd)
     ev.data.fd = clientfd;
     ev.events = EPOLLIN;
     reactor_.epoll_mod(clientfd, &ev, Recv_callBack);
+}
+
+void KvStore::ProcessCmd(char* cmd, size_t cmd_len)
+{
+    std::vector<std::string> tokens;
+    Split(tokens, cmd);
+}
+
+void KvStore::Split(std::vector<std::string>& tokens, char* cmd)
+{
+    int count = 0;
+    int idx = 0;
+
+    char* p = strtok(cmd + idx, " ");
+    while(p != nullptr)
+    {
+        tokens.push_back(p);
+        idx += tokens[count].size() + 1;
+        ++count;
+        p = strtok(cmd + idx, " ");
+    }
+
+    for(auto item : tokens)
+    {
+        std::cout << item << std::endl;
+    }
 }
