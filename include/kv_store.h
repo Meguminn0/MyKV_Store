@@ -7,6 +7,7 @@ class KvStore
 {
 public:
     KvStore();
+    ~KvStore();
     void NetStart();
     void EventLoop();
 

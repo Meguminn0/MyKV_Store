@@ -42,7 +42,8 @@ protected:
     static void init();
 
 private:
-    Reactor() {  }
+    Reactor();
+    ~Reactor();
     Reactor(const Reactor&) = delete;
     const Reactor& operator=(const Reactor&) = delete;
 

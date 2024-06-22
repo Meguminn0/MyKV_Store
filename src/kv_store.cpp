@@ -16,6 +16,14 @@ KvStore::KvStore() : listen_socketfd_(-1)
 
 }
 
+KvStore::~KvStore()
+{
+    if(listen_socketfd_ != -1)
+    {
+        close(listen_socketfd_);
+    }
+}
+
 void KvStore::NetStart()
 {
     listen_socketfd_ = socket(AF_INET, SOCK_STREAM, 0);

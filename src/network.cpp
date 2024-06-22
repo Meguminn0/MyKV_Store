@@ -2,16 +2,16 @@
 #include <map>
 #include <sys/epoll.h>
 #include <assert.h>
+#include <unistd.h>
 
 #include "network.h"
 
-int Reactor::epoll_fd_;
+int Reactor::epoll_fd_ = -1;
 std::map<int, Reactor::Connector*> Reactor::fd_map_;
 
 Reactor& Reactor::getInstance()
 {
     static Reactor instance;
-    instance.init();
     return instance;
 }
 
@@ -58,4 +58,25 @@ void Reactor::init()
 {
     epoll_fd_ = epoll_create(1);
     assert(epoll_fd_ != -1);
+}
+
+Reactor::Reactor()
+{
+    init();
+}
+Reactor::~Reactor()
+{
+    if(epoll_fd_ != -1)
+    {
+        for(auto item : fd_map_)
+        {
+            epoll_del(item.first);
+            close(item.first);
+            delete item.second;
+            item.second = nullptr;
+        }
+        fd_map_.clear();
+        close(epoll_fd_);
+        epoll_fd_ = -1;
+    }
 }
