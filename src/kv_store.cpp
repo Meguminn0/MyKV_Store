@@ -115,11 +115,12 @@ void KvStore::Recv_callBack(int clientfd)
         std::cout << "fd: " << clientfd << " recv data: " << clinet_connector->recv_buffer << std::endl;
 
         // 处理客户端发送的数据
-        ProcessCmd(clinet_connector->recv_buffer, clinet_connector->recv_len);
+        std::string result_str;
+        ProcessCmd(clinet_connector->recv_buffer, clinet_connector->recv_len, result_str);
         
         memset(clinet_connector->send_buffer, '\0', SEND_BUFFER_SIZE);
-        memcpy(clinet_connector->send_buffer, clinet_connector->recv_buffer, clinet_connector->recv_len);
-        clinet_connector->send_len = clinet_connector->recv_len;
+        memcpy(clinet_connector->send_buffer, result_str.c_str(), result_str.size());
+        clinet_connector->send_len = result_str.size();
         
         memset(clinet_connector->recv_buffer, '\0', RECV_BUFFER_SIZE);
         clinet_connector->recv_len = 0;
@@ -153,28 +154,35 @@ void KvStore::Send_callBack(int clientfd)
     reactor_.epoll_mod(clientfd, &ev, Recv_callBack);
 }
 
-void KvStore::ProcessCmd(char* cmd, size_t cmd_len)
+// 处理Cmd命令
+size_t KvStore::ProcessCmd(const char* cmd, size_t cmd_len, std::string& result)
 {
     std::vector<std::string> tokens;
     Split(tokens, cmd);
+
+    result.append("OK");
+    return result.size();
 }
 
-void KvStore::Split(std::vector<std::string>& tokens, char* cmd)
+// 将命令进行拆分
+void KvStore::Split(std::vector<std::string>& tokens, const char* cmd)
 {
     int count = 0;
     int idx = 0;
+    char tmp_cmd[CMD_SIZE] = { '\0' };
+    memcpy(tmp_cmd, cmd, CMD_SIZE);
 
-    char* p = strtok(cmd + idx, " ");
+    char* p = strtok(tmp_cmd + idx, " ");
     while(p != nullptr)
     {
         tokens.push_back(p);
-        idx += tokens[count].size() + 1;
+        idx = tokens[count].size() + 1;
         ++count;
-        p = strtok(cmd + idx, " ");
+        p = strtok(p + idx, " ");
     }
 
-    for(auto item : tokens)
-    {
-        std::cout << item << std::endl;
-    }
+    // for(auto item : tokens)
+    // {
+    //     std::cout << item << std::endl;
+    // }
 }
