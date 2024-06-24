@@ -276,7 +276,7 @@ void RBTree::RightRotate(RBTreeNode* node)
     }
 }
 
-
+#ifdef DEBUG
 void RBTree::intrav(std::vector<char*>& v)
 {
 	RBTreeNode* head = this->root_;
@@ -300,6 +300,7 @@ void RBTree::intrav(std::vector<char*>& v)
 		}
 	}
 }
+#endif
 
 void RBTree::LeftRotate(RBTreeNode* node)
 {

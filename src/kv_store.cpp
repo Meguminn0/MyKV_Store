@@ -1,4 +1,3 @@
-#include "kv_store.h"
 #include <vector>
 #include <string>
 #include <sys/types.h>          /* See NOTES */
@@ -9,7 +8,12 @@
 #include <string.h>
 #include <assert.h>
 
+#include "kv_store.h"
+#include "cmdfactory.h"
+#include "cmdstrategy.h"
+
 Reactor& KvStore::reactor_ = Reactor::getInstance();
+CmdFactory& KvStore::cmd_factory_ = CmdFactory::GetInstance();
 
 KvStore::KvStore() : listen_socketfd_(-1)
 {
@@ -124,7 +128,7 @@ void KvStore::Recv_callBack(int clientfd)
 
         // 处理客户端发送的数据
         std::string result_str;
-        ProcessCmd(clinet_connector->recv_buffer, clinet_connector->recv_len, result_str);
+        ExecuteCmd(clinet_connector->recv_buffer, clinet_connector->recv_len, result_str);
         
         memset(clinet_connector->send_buffer, '\0', SEND_BUFFER_SIZE);
         memcpy(clinet_connector->send_buffer, result_str.c_str(), result_str.size());
@@ -162,23 +166,26 @@ void KvStore::Send_callBack(int clientfd)
     reactor_.epoll_mod(clientfd, &ev, Recv_callBack);
 }
 
-// 处理Cmd命令
-size_t KvStore::ProcessCmd(const char* cmd, size_t cmd_len, std::string& result)
+// 执行Cmd命令
+size_t KvStore::ExecuteCmd(std::string cmd, size_t cmd_len, std::string& result)
 {
     std::vector<std::string> tokens;
     Split(tokens, cmd);
 
-    result.append("OK");
+    CmdStrategy* cmd_strategy = cmd_factory_.GetCmdStrategy(tokens[0]);
+
+    result = cmd_strategy->Execute(tokens);
+
     return result.size();
 }
 
 // 将命令进行拆分
-void KvStore::Split(std::vector<std::string>& tokens, const char* cmd)
+void KvStore::Split(std::vector<std::string>& tokens, std::string cmd)
 {
     int count = 0;
     int idx = 0;
     char tmp_cmd[CMD_SIZE] = { '\0' };
-    memcpy(tmp_cmd, cmd, CMD_SIZE);
+    memcpy(tmp_cmd, cmd.c_str(), CMD_SIZE);
 
     char* p = strtok(tmp_cmd + idx, " ");
     while(p != nullptr)

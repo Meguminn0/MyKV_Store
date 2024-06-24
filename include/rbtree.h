@@ -47,8 +47,10 @@ public:
 
     RBTree() : root_(nullptr), count_(0) { }
     ~RBTree();
-
+    
+#ifdef DEBUG
 	void intrav(std::vector<char*>& v);
+#endif
     int Insert(key_type key, value_type value);
     int Remove(key_type key);
     RBTreeNode* Search(key_type key);
