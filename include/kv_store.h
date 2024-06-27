@@ -11,6 +11,7 @@ public:
     KvStore();
     ~KvStore();
     void NetStart();
+    void EngineInit();
     void EventLoop();
 
 protected:

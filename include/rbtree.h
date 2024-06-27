@@ -1,19 +1,21 @@
 #ifndef RBTREE_H_
 #define RBTREE_H_
+
 #include <cassert>
-#include <cstring>
+#include <string>
 // #define DEBUG
 
 #ifdef DEBUG
 #include <iostream>
+#include <vector>
 #endif
 
 typedef bool rbtree_node_color_type;        // 节点颜色
 static constexpr rbtree_node_color_type rbtree_node_red = true;      // 红色节点 
 static constexpr rbtree_node_color_type rbtree_node_black = false;   // 黑色节点
 
-typedef char* rbTree_node_key_type;     // key类型
-typedef char* rbTree_node_value_type;   // value类型
+typedef std::string rbTree_node_key_type;     // key类型
+typedef std::string rbTree_node_value_type;   // value类型
 
 struct RBTreeNode
 {
@@ -31,7 +33,7 @@ struct RBTreeNode
 };
 
 // tree algorithm
-RBTreeNode* CreateNode(RBTreeNode::key_type key, RBTreeNode::value_type value);
+RBTreeNode* CreateNode(const RBTreeNode::key_type key, const RBTreeNode::value_type value);
 void InvertColor(RBTreeNode* node);
 
 #ifdef DEBUG
@@ -49,13 +51,14 @@ public:
     ~RBTree();
     
 #ifdef DEBUG
-	void intrav(std::vector<char*>& v);
+	void intrav(std::vector<std::string>& v);
 #endif
     int Insert(key_type key, value_type value);
     int Remove(key_type key);
-    RBTreeNode* Search(key_type key);
+    value_type Search(key_type key);
 
 protected:
+    RBTreeNode* SearchNode(key_type key);
     RBTreeNode* GetBrother(RBTreeNode* node);
     RBTreeNode* GetLeftMostNode(RBTreeNode* node);
     RBTreeNode* GetRightMostNode(RBTreeNode* node);

@@ -11,7 +11,7 @@ int main()
 
     kv_store.NetStart();
 
-
+    kv_store.EngineInit();
 
     kv_store.EventLoop();
 

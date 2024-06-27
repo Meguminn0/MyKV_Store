@@ -6,7 +6,6 @@
 
 RBTreeNode* CreateNode(RBTreeNode::key_type key, RBTreeNode::value_type value)
 {
-    std::allocator<RBTreeNode> alltor;
     RBTreeNode* node = new RBTreeNode();
     node->key = key;
     node->value = value;
@@ -26,7 +25,7 @@ void InvertColor(RBTreeNode* node)
 #ifdef DEBUG
 void show(RBTree* tree)
 {
-	std::vector<char*> retv;
+	std::vector<std::string> retv;
 	tree->intrav(retv);
 	if (retv.empty())
 	{
@@ -90,7 +89,7 @@ int RBTree::Insert(key_type key, value_type value)
     RBTreeNode* insert_node = root_;
     while(insert_node != nullptr)
     {
-        if(strcmp(key, insert_node->key) > 0)
+        if(key > insert_node->key)
         {
             if(insert_node->right == nullptr)
             {
@@ -102,7 +101,7 @@ int RBTree::Insert(key_type key, value_type value)
             }
             insert_node = insert_node->right;
         }
-        else if(strcmp(key, insert_node->key) < 0)
+        else if(key < insert_node->key)
         {
             if(insert_node->left == nullptr)
             {
@@ -126,7 +125,7 @@ int RBTree::Insert(key_type key, value_type value)
 // 返回1成功，返回0失败
 int RBTree::Remove(key_type key)
 {
-    RBTreeNode* remove_node = Search(key);
+    RBTreeNode* remove_node = SearchNode(key);
     if(remove_node != nullptr)
     {
         if(remove_node->left != nullptr && remove_node->right != nullptr)
@@ -190,17 +189,29 @@ int RBTree::Remove(key_type key)
     return 0;
 }
 
+// 成功返回字符串，失败返回空字符串
+RBTree::value_type RBTree::Search(key_type key)
+{
+    RBTreeNode* search_node = SearchNode(key);
+    if(search_node != nullptr)
+    {
+        return search_node->value;
+    }
+
+    return "";
+}
+
 // 成功返回指针，失败返回nullptr
-RBTreeNode* RBTree::Search(key_type key)
+RBTreeNode* RBTree::SearchNode(key_type key)
 {
     RBTreeNode* search_node = root_;
     while(search_node != nullptr)
     {
-        if(strcmp(key, search_node->key) < 0)
+        if(key < search_node->key)
         {
             search_node = search_node->left;
         }
-        else if(strcmp(key, search_node->key) > 0)
+        else if(key > search_node->key)
         {
             search_node = search_node->right;
         }
@@ -277,7 +288,7 @@ void RBTree::RightRotate(RBTreeNode* node)
 }
 
 #ifdef DEBUG
-void RBTree::intrav(std::vector<char*>& v)
+void RBTree::intrav(std::vector<std::string>& v)
 {
 	RBTreeNode* head = this->root_;
 	if (head != nullptr)

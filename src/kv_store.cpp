@@ -11,6 +11,7 @@
 #include "kv_store.h"
 #include "cmdfactory.h"
 #include "cmdstrategy.h"
+#include "t_string.h"
 
 Reactor& KvStore::reactor_ = Reactor::getInstance();
 CmdFactory& KvStore::cmd_factory_ = CmdFactory::GetInstance();
@@ -47,6 +48,12 @@ void KvStore::NetStart()
     listen(listen_socketfd_, 10);
     
     std::cout << "listen port: " << 2024 << " sockfd: " << listen_socketfd_ << std::endl;
+}
+
+void KvStore::EngineInit()
+{
+    RBTree* rbtree = new RBTree();
+    StringCmdInit(rbtree);
 }
 
 void KvStore::EventLoop()

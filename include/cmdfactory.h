@@ -5,6 +5,24 @@
 #include <string>
 #include <map>
 
+// 给客户端返回信息的枚举
+enum result_t{
+    // set、delete
+    RES_OK = 0,
+    RES_AL_HAVE,
+    RES_FAIL,
+    // get、delete
+    RES_NO_KEY,
+    // exist
+    RES_TRUE,
+    RES_FALSE,
+    // error
+    RES_ERROR,
+};
+
+// 列出具体的返回信息
+extern const char* RES_MSG[];
+
 class CmdFactory
 {
 public:
