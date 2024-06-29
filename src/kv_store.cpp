@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <memory>
 #include <sys/types.h>          /* See NOTES */
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -13,7 +14,7 @@
 #include "cmdstrategy.h"
 #include "t_string.h"
 
-Reactor& KvStore::reactor_ = Reactor::getInstance();
+Reactor& KvStore::reactor_ = Reactor::GetInstance();
 CmdFactory& KvStore::cmd_factory_ = CmdFactory::GetInstance();
 
 KvStore::KvStore() : listen_socketfd_(-1)
@@ -23,10 +24,7 @@ KvStore::KvStore() : listen_socketfd_(-1)
 
 KvStore::~KvStore()
 {
-    if(listen_socketfd_ != -1)
-    {
-        close(listen_socketfd_);
-    }
+    std::cout << "__FUNCTION__" << std::endl;
 }
 
 void KvStore::NetStart()
@@ -203,7 +201,7 @@ void KvStore::Split(std::vector<std::string>& tokens, std::string cmd)
         p = strtok(p + idx, " ");
     }
 
-    // for(auto item : tokens)
+    // for(auto& item : tokens)
     // {
     //     std::cout << item << std::endl;
     // }

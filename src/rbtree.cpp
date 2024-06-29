@@ -33,7 +33,7 @@ void show(RBTree* tree)
 	}
 	else
 	{
-		for (auto item : retv)
+		for (auto& item : retv)
 		{
 			std::cout << item << ' ';
 		}

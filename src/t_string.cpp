@@ -9,12 +9,14 @@
 
 void StringCmdInit(RBTree* rbtree)
 {
+    std::shared_ptr<RBTree> shared_rbtree(rbtree);
     CmdFactory& cmd_factory = CmdFactory::GetInstance();
-    cmd_factory.RegisterCmdStrategy("GET", new GetStringCmd(rbtree));
-    cmd_factory.RegisterCmdStrategy("SET", new SetStringCmd(rbtree));
+    
+    cmd_factory.RegisterCmdStrategy("GET", new GetStringCmd(shared_rbtree));
+    cmd_factory.RegisterCmdStrategy("SET", new SetStringCmd(shared_rbtree));
 }
 
-TString::TString(RBTree* rbtree) : rbtree_(rbtree)
+TString::TString(std::shared_ptr<RBTree> rbtree) : rbtree_(rbtree)
 {
 
 }
@@ -25,7 +27,7 @@ TString::~TString()
 }
 
 /* ----------------------SET command------------------------- */
-SetStringCmd::SetStringCmd(RBTree* rbtree) : TString(rbtree)
+SetStringCmd::SetStringCmd(std::shared_ptr<RBTree> rbtree) : TString(rbtree)
 {
 
 }
@@ -55,7 +57,7 @@ std::string SetStringCmd::Execute(const std::vector<std::string>& cmd)
 }
 
 /* ----------------------GET command------------------------- */
-GetStringCmd::GetStringCmd(RBTree* rbtree) : TString(rbtree)
+GetStringCmd::GetStringCmd(std::shared_ptr<RBTree> rbtree) : TString(rbtree)
 {
 
 }
@@ -70,11 +72,11 @@ std::string GetStringCmd::Execute(const std::vector<std::string>& cmd)
         if(str.empty())
         {
             str = "nil";
-            return "(" + str + ")";
+            return "(" + str + ")\r\n";
         }
         else
         {
-            return "\"" + str + "\"";
+            return "\"" + str + "\"\r\n";
         }
     }
 

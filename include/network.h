@@ -31,7 +31,7 @@ public:
 
 public:
     // 单例模式：懒汉单例
-    static Reactor& getInstance();
+    static Reactor& GetInstance();
     Connector* getConnector(int fd);
     int epoll_add(int fd, epoll_event* event, CALLBACK_FUNCTION function);
     int epoll_mod(int fd, epoll_event* event, CALLBACK_FUNCTION function = nullptr);

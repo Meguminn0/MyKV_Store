@@ -1,6 +1,8 @@
 #include "cmdfactory.h"
 #include <string>
 
+#include <iostream>
+
 const char* RES_MSG[] = {
     "OK\r\n", 
     "Already have this key!\r\n", 
@@ -11,6 +13,7 @@ const char* RES_MSG[] = {
     "Error command!\r\n"
 };
 
+/* ----------------------Error command------------------------- */
 class ErrorStrategy : public CmdStrategy
 {
 public:
@@ -18,6 +21,8 @@ public:
     {
         return RES_MSG[RES_ERROR];
     }
+
+    void Show() { std::cout << "ErrorStrategy SHOW" << std::endl;}
 };
 
 CmdFactory& CmdFactory::GetInstance()
@@ -52,14 +57,11 @@ CmdFactory::CmdFactory()
 
 CmdFactory::~CmdFactory()
 {
-    if(!strategy_map_.empty())
+    for (auto& item : strategy_map_)
     {
-        for(auto item : strategy_map_)
-        {
-            delete item.second;
-            item.second = nullptr;
-        }
-
-        strategy_map_.clear();
+        delete item.second;
+        item.second = nullptr;
     }
+
+    strategy_map_.clear();
 }

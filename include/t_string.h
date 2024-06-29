@@ -18,26 +18,28 @@ void StringCmdInit(RBTree* rbtree);
 class TString : public CmdStrategy
 {
 public:
-    TString(RBTree* rbtree);
+    TString(std::shared_ptr<RBTree> rbtree);
     ~TString();
 
 protected:
     std::shared_ptr<RBTree> rbtree_;
 };
 
+/* ----------------------SET command------------------------- */
 class SetStringCmd : public TString
 {
 public:
-    SetStringCmd(RBTree* rbtree);
+    SetStringCmd(std::shared_ptr<RBTree> rbtree);
     ~SetStringCmd() = default;
 
     std::string Execute(const std::vector<std::string>& cmd);
 };
 
+/* ----------------------GET command------------------------- */
 class GetStringCmd : public TString
 {
 public:
-    GetStringCmd(RBTree* rbtree);
+    GetStringCmd(std::shared_ptr<RBTree> rbtree);
     ~GetStringCmd() = default;
 
     std::string Execute(const std::vector<std::string>& cmd);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <map>
 #include <sys/epoll.h>
 #include <assert.h>
@@ -6,10 +7,12 @@
 
 #include "network.h"
 
+#include <iostream>
+
 int Reactor::epoll_fd_ = -1;
 std::map<int, Reactor::Connector*> Reactor::fd_map_;
 
-Reactor& Reactor::getInstance()
+Reactor& Reactor::GetInstance()
 {
     static Reactor instance;
     return instance;
@@ -68,14 +71,18 @@ Reactor::~Reactor()
 {
     if(epoll_fd_ != -1)
     {
-        for(auto item : fd_map_)
+        std::vector<int> all_fd;
+        for(auto& item : fd_map_)
         {
-            epoll_del(item.first);
-            close(item.first);
-            delete item.second;
-            item.second = nullptr;
+            all_fd.emplace_back(item.first);
         }
-        fd_map_.clear();
+
+        for(auto& item : all_fd)
+        {
+            close(item);
+            epoll_del(item);
+        }
+        
         close(epoll_fd_);
         epoll_fd_ = -1;
     }
