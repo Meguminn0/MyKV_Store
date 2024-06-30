@@ -25,7 +25,6 @@ protected:
 private:
     int listen_socketfd_;
     static Reactor& reactor_;
-    static CmdFactory& cmd_factory_;
 };
 
 #endif

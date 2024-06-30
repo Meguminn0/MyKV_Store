@@ -17,12 +17,10 @@ const char* RES_MSG[] = {
 class ErrorStrategy : public CmdStrategy
 {
 public:
-    virtual std::string Execute(const std::vector<std::string>& cmd)
+    void Execute(const std::vector<std::string>& cmd, std::string& result)
     {
-        return RES_MSG[RES_ERROR];
+        result.assign(RES_MSG[RES_ERROR]);
     }
-
-    void Show() { std::cout << "ErrorStrategy SHOW" << std::endl;}
 };
 
 CmdFactory& CmdFactory::GetInstance()

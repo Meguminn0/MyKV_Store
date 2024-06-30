@@ -4,6 +4,7 @@
 #include "rbtree.h"
 #include "t_string.h"
 #include "cmdfactory.h"
+#include "cmdstrategy.h"
 
 #include <iostream>
 
@@ -14,71 +15,77 @@ void StringCmdInit(RBTree* rbtree)
     
     cmd_factory.RegisterCmdStrategy("GET", new GetStringCmd(shared_rbtree));
     cmd_factory.RegisterCmdStrategy("SET", new SetStringCmd(shared_rbtree));
-}
-
-TString::TString(std::shared_ptr<RBTree> rbtree) : rbtree_(rbtree)
-{
-
-}
-
-TString::~TString()
-{
-
+    cmd_factory.RegisterCmdStrategy("DELSTRING", new DelStringCmd(shared_rbtree));
 }
 
 /* ----------------------SET command------------------------- */
-SetStringCmd::SetStringCmd(std::shared_ptr<RBTree> rbtree) : TString(rbtree)
+void SetStringCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
 {
-
-}
-
-std::string SetStringCmd::Execute(const std::vector<std::string>& cmd)
-{
-    int idx = RES_ERROR;
-    if(cmd.size() == 3)
+    if(cmd.size() < 3)
     {
-        int flag = rbtree_->Insert(const_cast<char*>(cmd[1].c_str()), const_cast<char*>(cmd[2].c_str()));
-
-        if(flag == 1)
-        {
-            idx = RES_OK;
-        }
-        else if(flag == 0)
-        {
-            idx = RES_FAIL;
-        }
-        else
-        {
-            idx = RES_AL_HAVE;
-        }
+        result.assign(RES_MSG[RES_ERROR]);
+        return;
     }
 
-    return RES_MSG[idx];
+    int flag = rbtree_->Insert(const_cast<char*>(cmd[1].c_str()), const_cast<char*>(cmd[2].c_str()));
+    if(flag == 1)
+    {
+        result.assign(RES_MSG[RES_OK]);
+        CmdStrategy* strategy = CmdFactory::GetInstance().GetCmdStrategy("REGISTERKEY");
+        std::string result;
+        strategy->Execute(cmd, result);
+    }
+    else if(flag == 0)
+    {
+        result.assign(RES_MSG[RES_FAIL]);
+    }
+    else
+    {
+        result.assign(RES_MSG[RES_AL_HAVE]);
+    }
+    return;
 }
 
 /* ----------------------GET command------------------------- */
-GetStringCmd::GetStringCmd(std::shared_ptr<RBTree> rbtree) : TString(rbtree)
+void GetStringCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
 {
+    if(cmd.size()  < 2)
+    {
+        result.assign(RES_MSG[RES_ERROR]);
+        return;
+    }
 
+    std::string str;
+    str = rbtree_->Search(cmd[1]);
+
+    if(str.empty())
+    {
+        str = "nil";
+        result.assign("(" + str + ")\r\n");
+    }
+    else
+    {
+        result.assign("\"" + str + "\"\r\n");
+    }
 }
 
-std::string GetStringCmd::Execute(const std::vector<std::string>& cmd)
+/* ----------------------DELSTRING command------------------------- */
+void DelStringCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
 {
     if(cmd.size() == 2)
     {
-        std::string str;
-        str = rbtree_->Search(cmd[1]);
-
-        if(str.empty())
+        if(rbtree_->Remove(cmd[1]) == 1)
         {
-            str = "nil";
-            return "(" + str + ")\r\n";
+            result.assign("(integer) 1\r\n");
         }
         else
         {
-            return "\"" + str + "\"\r\n";
+            result.assign("(integer) 0\r\n");
         }
+        
     }
-
-    return RES_MSG[RES_ERROR];
+    else
+    {
+        result.assign(RES_MSG[RES_ERROR]);
+    }
 }

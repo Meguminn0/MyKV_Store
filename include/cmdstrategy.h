@@ -6,7 +6,7 @@
 class CmdStrategy
 {
 public:
-    virtual std::string Execute(const std::vector<std::string>& cmd) = 0;
+    virtual void Execute(const std::vector<std::string>& cmd, std::string& result) = 0;
     virtual ~CmdStrategy() { }
 };
 

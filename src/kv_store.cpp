@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <set>
 #include <memory>
 #include <sys/types.h>          /* See NOTES */
 #include <sys/socket.h>
@@ -13,9 +14,9 @@
 #include "cmdfactory.h"
 #include "cmdstrategy.h"
 #include "t_string.h"
+#include "keycommand.h"
 
 Reactor& KvStore::reactor_ = Reactor::GetInstance();
-CmdFactory& KvStore::cmd_factory_ = CmdFactory::GetInstance();
 
 KvStore::KvStore() : listen_socketfd_(-1)
 {
@@ -24,7 +25,7 @@ KvStore::KvStore() : listen_socketfd_(-1)
 
 KvStore::~KvStore()
 {
-    std::cout << "__FUNCTION__" << std::endl;
+
 }
 
 void KvStore::NetStart()
@@ -51,7 +52,9 @@ void KvStore::NetStart()
 void KvStore::EngineInit()
 {
     RBTree* rbtree = new RBTree();
+    std::set<std::string>* key_set = new std::set<std::string>();
     StringCmdInit(rbtree);
+    KeyCmdInit(key_set);
 }
 
 void KvStore::EventLoop()
@@ -177,9 +180,9 @@ size_t KvStore::ExecuteCmd(std::string cmd, size_t cmd_len, std::string& result)
     std::vector<std::string> tokens;
     Split(tokens, cmd);
 
-    CmdStrategy* cmd_strategy = cmd_factory_.GetCmdStrategy(tokens[0]);
+    CmdStrategy* cmd_strategy = CmdFactory::GetInstance().GetCmdStrategy(tokens[0]);
 
-    result = cmd_strategy->Execute(tokens);
+    cmd_strategy->Execute(tokens, result);
 
     return result.size();
 }

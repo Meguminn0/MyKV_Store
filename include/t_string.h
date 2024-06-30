@@ -18,8 +18,8 @@ void StringCmdInit(RBTree* rbtree);
 class TString : public CmdStrategy
 {
 public:
-    TString(std::shared_ptr<RBTree> rbtree);
-    ~TString();
+    TString(std::shared_ptr<RBTree> rbtree) : rbtree_(rbtree) { }
+    ~TString() = default;
 
 protected:
     std::shared_ptr<RBTree> rbtree_;
@@ -29,20 +29,30 @@ protected:
 class SetStringCmd : public TString
 {
 public:
-    SetStringCmd(std::shared_ptr<RBTree> rbtree);
+    SetStringCmd(std::shared_ptr<RBTree> rbtree) : TString(rbtree) { }
     ~SetStringCmd() = default;
 
-    std::string Execute(const std::vector<std::string>& cmd);
+    void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
 /* ----------------------GET command------------------------- */
 class GetStringCmd : public TString
 {
 public:
-    GetStringCmd(std::shared_ptr<RBTree> rbtree);
+    GetStringCmd(std::shared_ptr<RBTree> rbtree) : TString(rbtree) { }
     ~GetStringCmd() = default;
 
-    std::string Execute(const std::vector<std::string>& cmd);
+    void Execute(const std::vector<std::string>& cmd, std::string& result);
+};
+
+/* ----------------------DELSTRING command------------------------- */
+class DelStringCmd : public TString
+{
+public:
+    DelStringCmd(std::shared_ptr<RBTree> rbtree) : TString(rbtree) { }
+    ~DelStringCmd() = default;
+
+    void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
 #endif
