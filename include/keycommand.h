@@ -32,6 +32,16 @@ public:
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
+/*-------------------KEYS command-----------------------*/
+class KeysKeyCmd : public KeyCmd
+{
+public:
+    KeysKeyCmd(std::shared_ptr<std::set<std::string>>& shared_ptr) : KeyCmd(shared_ptr) {}
+    ~KeysKeyCmd() = default;
+
+    void Execute(const std::vector<std::string>& cmd, std::string& result);
+};
+
 
 /*-------------------Internal commands-----------------------*/
 class RegisterKeyCmd : public KeyCmd

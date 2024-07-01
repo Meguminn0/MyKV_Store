@@ -12,6 +12,7 @@ void KeyCmdInit(std::set<std::string>* pkeys_set)
     cmd_factory.RegisterCmdStrategy("DEL", new DelKeyCmd(keys_shared));
     cmd_factory.RegisterCmdStrategy("REGISTER_KEY", new RegisterKeyCmd(keys_shared));
     cmd_factory.RegisterCmdStrategy("DEREGISTER_KEY", new DeregisterKeyCmd(keys_shared));
+    cmd_factory.RegisterCmdStrategy("KEYS", new KeysKeyCmd(keys_shared));
 }
 
 bool KeyCmd::IsExist(const std::string& key)
@@ -38,9 +39,36 @@ void DelKeyCmd::Execute(const std::vector<std::string>& cmd, std::string& result
         
         if(result == "(integer) 1\r\n")
         {
-            CmdStrategy* strategy = CmdFactory::GetInstance().GetCmdStrategy("DEREGISTER_KEY");
+            strategy = CmdFactory::GetInstance().GetCmdStrategy("DEREGISTER_KEY");
             std::string res;
             strategy->Execute(cmd, res);
+        }
+    }
+}
+
+/*
+ * KEYS <pattern>
+ * 
+ * KEYS命令执行过程
+ * KEYS command execution process
+ */
+void KeysKeyCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
+{
+    if(keys_->empty())
+    {
+        result.assign("(empty array)\r\n");
+    }
+    else if(cmd[1] != "*")
+    {
+        result.assign("ERR can not parse this pattern " + cmd[1]);
+    }
+    else
+    {
+        int sz = keys_->size();
+        int index = 0;
+        for(auto it = keys_->begin(); it != keys_->end(); ++it)
+        {
+            result.append(std::to_string(++index) + ") \"" + *it + "\"\r\n");
         }
     }
 }

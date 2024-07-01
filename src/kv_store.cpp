@@ -176,10 +176,10 @@ void KvStore::Send_callBack(int clientfd)
 }
 
 // 执行Cmd命令
-size_t KvStore::ExecuteCmd(std::string cmd, size_t cmd_len, std::string& result)
+size_t KvStore::ExecuteCmd(const char* cmd, size_t cmd_len, std::string& result)
 {
     std::vector<std::string> tokens;
-    Split(tokens, cmd);
+    Split(tokens, cmd, cmd_len);
 
     CmdStrategy* cmd_strategy = CmdFactory::GetInstance().GetCmdStrategy(tokens[0]);
 
@@ -189,12 +189,12 @@ size_t KvStore::ExecuteCmd(std::string cmd, size_t cmd_len, std::string& result)
 }
 
 // 将命令进行拆分
-void KvStore::Split(std::vector<std::string>& tokens, std::string cmd)
+void KvStore::Split(std::vector<std::string>& tokens, const char* cmd, size_t cmd_len)
 {
     int count = 0;
     int idx = 0;
     char tmp_cmd[CMD_SIZE] = { '\0' };
-    memcpy(tmp_cmd, cmd.c_str(), CMD_SIZE);
+    memcpy(tmp_cmd, cmd, cmd_len);
 
     char* p = strtok(tmp_cmd + idx, " ");
     while(p != nullptr)

@@ -19,8 +19,8 @@ protected:
     static void Recv_callBack(int clientfd);
     static void Send_callBack(int clientfd);
 
-    static size_t ExecuteCmd(std::string cmd, size_t cmd_len, std::string& result);
-    static void Split(std::vector<std::string>& tokens, std::string cmd);
+    static size_t ExecuteCmd(const char* cmd, size_t cmd_len, std::string& result);
+    static void Split(std::vector<std::string>& tokens, const char* cmd, size_t cmd_len);
 
 private:
     int listen_socketfd_;
