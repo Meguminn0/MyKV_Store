@@ -1,8 +1,6 @@
 #include "cmdfactory.h"
 #include <string>
 
-#include <iostream>
-
 const char* RES_MSG[] = {
     "OK\r\n", 
     "Already have this key!\r\n", 
@@ -19,7 +17,14 @@ class ErrorStrategy : public CmdStrategy
 public:
     void Execute(const std::vector<std::string>& cmd, std::string& result)
     {
-        result.assign(RES_MSG[RES_ERROR]);
+        std::string str = "ERR unknown command ";
+        str.append("\'" + cmd[0] + "\'" + ", with args beginning with: ");
+        for(int i = 1; i < cmd.size(); ++i)
+        {
+            str.append("\'" + cmd[i] + "\' ");
+        }
+
+        result.assign(str);
     }
 };
 

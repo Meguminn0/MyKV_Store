@@ -6,8 +6,10 @@
 #include "cmdfactory.h"
 #include "cmdstrategy.h"
 
-#include <iostream>
-
+/*
+ * string 命令初始化函数
+ * string command init function
+ */
 void StringCmdInit(RBTree* rbtree)
 {
     std::shared_ptr<RBTree> shared_rbtree(rbtree);
@@ -15,10 +17,15 @@ void StringCmdInit(RBTree* rbtree)
     
     cmd_factory.RegisterCmdStrategy("GET", new GetStringCmd(shared_rbtree));
     cmd_factory.RegisterCmdStrategy("SET", new SetStringCmd(shared_rbtree));
-    cmd_factory.RegisterCmdStrategy("DELSTRING", new DelStringCmd(shared_rbtree));
+    cmd_factory.RegisterCmdStrategy("DEL_STRING", new DelStringCmd(shared_rbtree));
 }
 
-/* ----------------------SET command------------------------- */
+/*
+ * SET <key> <value>
+ * 
+ * SET命令执行过程
+ * SET command execution process
+ */
 void SetStringCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
 {
     if(cmd.size() < 3)
@@ -31,9 +38,9 @@ void SetStringCmd::Execute(const std::vector<std::string>& cmd, std::string& res
     if(flag == 1)
     {
         result.assign(RES_MSG[RES_OK]);
-        CmdStrategy* strategy = CmdFactory::GetInstance().GetCmdStrategy("REGISTERKEY");
-        std::string result;
-        strategy->Execute(cmd, result);
+        CmdStrategy* strategy = CmdFactory::GetInstance().GetCmdStrategy("REGISTER_KEY");
+        std::string res;
+        strategy->Execute(cmd, res);
     }
     else if(flag == 0)
     {
@@ -46,7 +53,12 @@ void SetStringCmd::Execute(const std::vector<std::string>& cmd, std::string& res
     return;
 }
 
-/* ----------------------GET command------------------------- */
+/*
+ * GET <key>
+ * 
+ * GET命令执行过程
+ * GET command execution process
+ */
 void GetStringCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
 {
     if(cmd.size()  < 2)
@@ -69,7 +81,12 @@ void GetStringCmd::Execute(const std::vector<std::string>& cmd, std::string& res
     }
 }
 
-/* ----------------------DELSTRING command------------------------- */
+/*
+ * DELSTRING command
+ * 
+ * 删除key的过程。该接口是一个内部命令，不对外使用
+ * The process of delete a key. This API is Internal commands，not available to the public
+ */
 void DelStringCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
 {
     if(cmd.size() == 2)

@@ -5,7 +5,6 @@
 #ifndef NET_WORK_H_
 #define NET_WORK_H_
 
-#include <iostream>
 #include <map>
 #include <sys/epoll.h>
 

@@ -42,6 +42,15 @@ public:
 
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
-/*-------------------DEL command-----------------------*/
+
+class DeregisterKeyCmd : public KeyCmd
+{
+public:
+    DeregisterKeyCmd(std::shared_ptr<std::set<std::string>>& shared_ptr) : KeyCmd(shared_ptr) {}
+    ~DeregisterKeyCmd() = default;
+
+    void Execute(const std::vector<std::string>& cmd, std::string& result);
+};
+/*----------------------------------------------------------*/
 
 #endif

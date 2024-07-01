@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 #include <map>
 #include <sys/epoll.h>
@@ -6,8 +5,6 @@
 #include <unistd.h>
 
 #include "network.h"
-
-#include <iostream>
 
 int Reactor::epoll_fd_ = -1;
 std::map<int, Reactor::Connector*> Reactor::fd_map_;

@@ -45,7 +45,8 @@ public:
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
-/* ----------------------DELSTRING command------------------------- */
+/* ----------------------Internal commands------------------------- */
+// DELSTRING command
 class DelStringCmd : public TString
 {
 public:
@@ -54,5 +55,7 @@ public:
 
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
+
+/* ---------------------------------------------------------------- */
 
 #endif
