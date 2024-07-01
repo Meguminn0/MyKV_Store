@@ -23,6 +23,7 @@ public:
         {
             str.append("\'" + cmd[i] + "\' ");
         }
+        str.append("\r\n");
 
         result.assign(str);
     }

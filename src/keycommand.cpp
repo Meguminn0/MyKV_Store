@@ -30,7 +30,7 @@ void DelKeyCmd::Execute(const std::vector<std::string>& cmd, std::string& result
 {
     if(!IsExist(cmd[1]))
     {
-        result.assign("(integer) 0");
+        result.assign("(integer) 0\r\n");
     }
     else
     {
@@ -60,7 +60,7 @@ void KeysKeyCmd::Execute(const std::vector<std::string>& cmd, std::string& resul
     }
     else if(cmd[1] != "*")
     {
-        result.assign("ERR can not parse this pattern " + cmd[1]);
+        result.assign("ERR can not parse this pattern " + cmd[1] + "\r\n");
     }
     else
     {
