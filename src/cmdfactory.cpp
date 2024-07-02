@@ -6,8 +6,8 @@ const char* RES_MSG[] = {
     "Already have this key!\r\n", 
     "Fail\r\n",
     "No such key!\r\n",
-    "True\r\n", 
-    "False\r\n",
+    "(integer) 1\r\n", 
+    "(integer) 0\r\n",
     "Error command!\r\n"
 };
 

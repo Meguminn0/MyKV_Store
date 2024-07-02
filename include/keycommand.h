@@ -42,6 +42,15 @@ public:
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
+/*-------------------EXISTS command-----------------------*/
+class ExistsKeyCmd : public KeyCmd
+{
+public:
+    ExistsKeyCmd(std::shared_ptr<std::set<std::string>>& shared_ptr) : KeyCmd(shared_ptr) {}
+    ~ExistsKeyCmd() = default;
+
+    void Execute(const std::vector<std::string>& cmd, std::string& result);
+};
 
 /*-------------------Internal commands-----------------------*/
 class RegisterKeyCmd : public KeyCmd

@@ -10,9 +10,11 @@ void KeyCmdInit(std::set<std::string>* pkeys_set)
     CmdFactory& cmd_factory = CmdFactory::GetInstance();
 
     cmd_factory.RegisterCmdStrategy("DEL", new DelKeyCmd(keys_shared));
+    cmd_factory.RegisterCmdStrategy("KEYS", new KeysKeyCmd(keys_shared));
+    cmd_factory.RegisterCmdStrategy("EXISTS", new ExistsKeyCmd(keys_shared));
+
     cmd_factory.RegisterCmdStrategy("REGISTER_KEY", new RegisterKeyCmd(keys_shared));
     cmd_factory.RegisterCmdStrategy("DEREGISTER_KEY", new DeregisterKeyCmd(keys_shared));
-    cmd_factory.RegisterCmdStrategy("KEYS", new KeysKeyCmd(keys_shared));
 }
 
 bool KeyCmd::IsExist(const std::string& key)
@@ -74,6 +76,28 @@ void KeysKeyCmd::Execute(const std::vector<std::string>& cmd, std::string& resul
 }
 
 /*
+ * EXISTS <key>
+ * 
+ * EXISTS命令执行过程
+ * EXISTS command execution process
+ */
+void ExistsKeyCmd::Execute(const std::vector<std::string>& cmd, std::string& result)
+{
+    if(cmd.size() < 2)
+    {
+        result.assign("(error) ERR wrong number of arguments for 'exists' command\r\n");
+    }
+    else if(keys_->empty() || !IsExist(cmd[1]))
+    {
+        result.assign(RES_MSG[RES_FALSE]);
+    }
+    else
+    {
+        result.assign(RES_MSG[RES_TRUE]);
+    }
+}
+
+/*
  * Register key command
  * 
  * 注册key的过程。该接口是一个内部命令，不对外使用
@@ -88,7 +112,7 @@ void RegisterKeyCmd::Execute(const std::vector<std::string>& cmd, std::string& r
     else
     {
         keys_->insert(cmd[1]);
-        result.assign("(integer) 1\r\n");
+        result.assign(RES_MSG[RES_TRUE]);
     }
 }
 
@@ -107,6 +131,6 @@ void DeregisterKeyCmd::Execute(const std::vector<std::string>& cmd, std::string&
     else
     {
         keys_->erase(cmd[1]);
-        result.assign("(integer) 1\r\n");
+        result.assign(RES_MSG[RES_TRUE]);
     }
 }
