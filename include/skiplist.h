@@ -67,19 +67,4 @@ private:
 	int level_;					// 跳表中层数最大的节点层数
 };
 
-std::string getkey()
-{
-	std::string str = "AAA";
-	str[0] += rand() % 24;
-	str[1] += rand() % 24;
-	str[2] += rand() % 24;
-
-	return str;
-}
-
-std::string getvalue()
-{
-	return getkey();
-}
-
 #endif

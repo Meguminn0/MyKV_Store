@@ -1,3 +1,13 @@
+/*
+ * Key 命令类型，对所有key值进行操作
+ * 
+ * 支持的命令有：
+ * 1) DEL <key>
+ * 2) KEYS <pattern>
+ * 3）EXISTS <key>
+ *
+ */
+
 #ifndef KEY_COMMAND_H_
 #define KEY_COMMAND_H_
 
@@ -8,7 +18,8 @@
 #include "cmdstrategy.h"
 #include "cmdfactory.h"
 
-void KeyCmdInit(std::set<std::string>* pkeys_set);
+// Key 命令类型初始化函数
+void KeyCmdInit();
 
 class KeyCmd : public CmdStrategy
 {
@@ -22,7 +33,12 @@ protected:
     std::shared_ptr<std::set<std::string>> keys_;
 };
 
-/*-------------------DEL command-----------------------*/
+/*
+ * DEL <key>
+ * 
+ * DEL命令执行过程
+ * DEL command execution process
+ */
 class DelKeyCmd : public KeyCmd
 {
 public:
@@ -32,7 +48,12 @@ public:
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
-/*-------------------KEYS command-----------------------*/
+/*
+ * KEYS <pattern>
+ * 
+ * KEYS命令执行过程
+ * KEYS command execution process
+ */
 class KeysKeyCmd : public KeyCmd
 {
 public:
@@ -42,7 +63,12 @@ public:
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
-/*-------------------EXISTS command-----------------------*/
+/*
+ * EXISTS <key>
+ * 
+ * EXISTS命令执行过程
+ * EXISTS command execution process
+ */
 class ExistsKeyCmd : public KeyCmd
 {
 public:
@@ -52,7 +78,14 @@ public:
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
-/*-------------------Internal commands-----------------------*/
+/*------------------- 内部命令 (Internal commands) -----------------------*/
+
+/*
+ * Register key command
+ * 
+ * 注册key的过程。该接口是一个内部命令，不对外使用
+ * The process of registering a key. This API is Internal commands，not available to the public
+ */
 class RegisterKeyCmd : public KeyCmd
 {
 public:
@@ -62,6 +95,12 @@ public:
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
 
+/*
+ * Deregister key command
+ * 
+ * 注销key的过程。该接口是一个内部命令，不对外使用
+ * The process of deregistering a key. This API is Internal commands，not available to the public
+ */
 class DeregisterKeyCmd : public KeyCmd
 {
 public:
@@ -70,6 +109,7 @@ public:
 
     void Execute(const std::vector<std::string>& cmd, std::string& result);
 };
-/*----------------------------------------------------------*/
+
+/* ---------------------------------------------------------------------------- */
 
 #endif

@@ -10,13 +10,14 @@
  * string 命令初始化函数
  * string command init function
  */
-void StringCmdInit(RBTree* rbtree)
+void StringCmdInit()
 {
-    std::shared_ptr<RBTree> shared_rbtree(rbtree);
+    std::shared_ptr<RBTree> shared_rbtree(new RBTree());
     CmdFactory& cmd_factory = CmdFactory::GetInstance();
     
     cmd_factory.RegisterCmdStrategy("GET", new GetStringCmd(shared_rbtree));
     cmd_factory.RegisterCmdStrategy("SET", new SetStringCmd(shared_rbtree));
+    
     cmd_factory.RegisterCmdStrategy("DEL_STRING", new DelStringCmd(shared_rbtree));
 }
 

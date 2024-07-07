@@ -4,9 +4,9 @@
  * key 命令初始化函数
  * key command init function
  */
-void KeyCmdInit(std::set<std::string>* pkeys_set)
+void KeyCmdInit()
 {
-    std::shared_ptr<std::set<std::string>> keys_shared(pkeys_set);
+    std::shared_ptr<std::set<std::string>> keys_shared(new std::set<std::string>());
     CmdFactory& cmd_factory = CmdFactory::GetInstance();
 
     cmd_factory.RegisterCmdStrategy("DEL", new DelKeyCmd(keys_shared));

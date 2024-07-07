@@ -52,10 +52,8 @@ void KvStore::NetStart()
 
 void KvStore::EngineInit()
 {
-    RBTree* rbtree = new RBTree();
-    std::set<std::string>* key_set = new std::set<std::string>();
-    StringCmdInit(rbtree);
-    KeyCmdInit(key_set);
+    StringCmdInit();
+    KeyCmdInit();
 }
 
 void KvStore::EventLoop()
