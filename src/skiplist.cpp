@@ -5,7 +5,7 @@ SkipList::SkipList()
 {
     srand(time(nullptr));
     tail_ = nullptr;
-    head_ = new SkipListNode(0, 0, tail_);
+    head_ = new SkipListNode("nil", "nil", tail_);
     count = 0;
     level_ = 0;
 }
@@ -21,7 +21,7 @@ SkipList::~SkipList()
     }
 }
 
-void SkipList::Insert(const int& key, const int& value)
+void SkipList::Insert(const key_type& key, const value_type& value)
 {
     SkipListNode* update[SKIPLIST_MAXLEVEL + 1], * p;
     p = head_;
@@ -37,10 +37,10 @@ void SkipList::Insert(const int& key, const int& value)
         update[i] = p;
     }
 
-    // 当前跳表中存在键值为key的节点，更新对应的value值。
-    if (p->key_ == key)
+    if(p->level_[0].forward_ != tail_ && p->level_[0].forward_->key_ == key)
     {
-        p->value_ = value;
+        // 当前跳表中存在键值为key的节点，更新对应的value值。
+        p->level_[0].forward_->value_ = value;
         return;
     }
 
@@ -69,7 +69,7 @@ void SkipList::Insert(const int& key, const int& value)
     ++count;
 }
 
-bool SkipList::Delete(const int& key)
+bool SkipList::Delete(const key_type& key)
 {
     SkipListNode* update[SKIPLIST_MAXLEVEL + 1], * p;
 
@@ -100,7 +100,7 @@ bool SkipList::Delete(const int& key)
     }
 
     delete p;
-    while (level_ > 1 && head_->level_[level_].forward_ == tail_)
+    while (level_ > 0 && head_->level_[level_].forward_ == tail_)
     {
         --level_;
     }
@@ -109,7 +109,14 @@ bool SkipList::Delete(const int& key)
     return true;
 }
 
-bool SkipList::Find(const int& key)
+SkipList::value_type& SkipList::operator[](const key_type& key) 
+{
+    SkipListNode* v = FindNode(key);
+    if (v == tail_) Insert(key, "nil");
+    return FindNode(key)->value_;
+}
+
+bool SkipList::Find(const key_type& key)
 {
     if (FindNode(key) != nullptr)
     {
@@ -130,7 +137,7 @@ int SkipList::RandomLevel()
     return SKIPLIST_MAXLEVEL < level ? SKIPLIST_MAXLEVEL : level;
 }
 
-SkipListNode* SkipList::FindNode(const int& key)
+SkipListNode* SkipList::FindNode(const key_type& key)
 {
     SkipListNode* p = head_;
     for (int i = level_; i >= 0; --i)

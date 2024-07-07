@@ -6,18 +6,24 @@
 static const int SKIPLIST_MAXLEVEL = 32;
 static const int SKIPLIST_P = 4;
 
+typedef std::string SKIPLIST_KEY_TYPE;     // key类型
+typedef std::string SKIPLIST_VALUE_TYPE;   // value类型
+
 struct SkipListNode
 {
-	int key_;
-	int value_;
+	typedef SKIPLIST_KEY_TYPE	key_type;
+	typedef SKIPLIST_KEY_TYPE	value_type;
+
+	key_type key_;
+	value_type value_;
 	struct SkipLevel
 	{
 		SkipListNode* forward_;
 	} *level_;
 
-	SkipListNode() : key_(0), value_(0), level_(nullptr) { }
+	SkipListNode() : level_(nullptr) { }
 
-	SkipListNode(const int& key, const int& value, SkipListNode* const next = nullptr)
+	SkipListNode(const key_type& key, const value_type& value, SkipListNode* const next = nullptr)
 		: key_(key), value_(value)
 	{
 		level_ = new SkipLevel[SKIPLIST_MAXLEVEL + 1];
@@ -39,15 +45,20 @@ struct SkipListNode
 class SkipList
 {
 public:
+	typedef SkipListNode::key_type    key_type;
+	typedef SkipListNode::value_type  value_type;
+
+public:
 	SkipList();
 	~SkipList();
-	void Insert(const int& key, const int& value);
-	bool Delete(const int& key);
-	bool Find(const int& key);
+	void Insert(const key_type& key, const value_type& value);
+	bool Delete(const key_type& key);
+	value_type& operator[](const key_type& key);
+	bool Find(const key_type& key);
 
 protected:
 	int RandomLevel();
-	SkipListNode* FindNode(const int& key);
+	SkipListNode* FindNode(const key_type& key);
 
 private:
 	SkipListNode* tail_;		// 跳表尾指针
@@ -56,5 +67,19 @@ private:
 	int level_;					// 跳表中层数最大的节点层数
 };
 
+std::string getkey()
+{
+	std::string str = "AAA";
+	str[0] += rand() % 24;
+	str[1] += rand() % 24;
+	str[2] += rand() % 24;
+
+	return str;
+}
+
+std::string getvalue()
+{
+	return getkey();
+}
 
 #endif
